@@ -8,7 +8,6 @@ from fastapi import FastAPI, WebSocket
 import cv2
 import numpy as np
 from fer import FER
-
 app = FastAPI()
 detector = FER()
 
@@ -30,7 +29,9 @@ async def websocket_endpoint(websocket: WebSocket):
             "predictions": prediction[0]['emotions'],
             "emotion": max(prediction[0]['emotions'], key=prediction[0]['emotions'].get)
         }
+        response = []
         await websocket.send_json(response)
         websocket.close()
     except:
         websocket.close()
+

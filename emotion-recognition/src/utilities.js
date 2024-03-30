@@ -1,6 +1,7 @@
 // Drawing Mesh
 export const drawMesh = (predictions, emotions, ctx) => {
-var emo = emotions['emotion']
+// var emo = emotions['emotion']
+var emo = "test"
 if (predictions.length > 0) {
     for (let i = 0; i < predictions.length; i++) {
         const start = predictions[i].topLeft;
@@ -29,7 +30,7 @@ if (predictions.length > 0) {
           ctx.fillStyle = 'gray';
         }
         else {
-          ctx.fillStyle = 'pink';
+          ctx.fillStyle = 'green';
         }
         ctx.globalAlpha = 0.2;
         ctx.rect(start[0], start[1], size[0], size[1]);
