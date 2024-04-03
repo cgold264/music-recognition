@@ -52,24 +52,20 @@ export default function About() {
       });
     }
 
-    //   // Websocket
-    //   var socket = new WebSocket("ws://localhost:8000");
-    //   var imageSrc = webcamRef.current.getScreenshot();
-    //   var apiCall = {
-    //     event: "localhost:subscribe",
-    //     data: {
-    //       image: imageSrc,
-    //     },
-    //   };
-    //   socket.onopen = () => socket.send(JSON.stringify(apiCall));
-    //   socket.onmessage = function (event) {
-    //     var pred_log = JSON.parse(event.data);
-
-    //     document.getElementById("emotion_text").value = pred_log["emotion"];
-
-    //     // Get canvas context
-
-    //}
+      // Websocket
+      var socket = new WebSocket("ws://localhost:8000");
+      var imageSrc = webcamRef.current.getScreenshot();
+      var apiCall = {
+        event: "localhost:subscribe",
+        data: {
+          image: imageSrc,
+        },
+      };
+      socket.onopen = () => socket.send(JSON.stringify(apiCall));
+      socket.onmessage = function (event) {
+      var pred_log = JSON.parse(event.data);
+      console.log(pred_log)
+    }
   };
   useEffect(() => {
     runFaceDetectorModel();

@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import About from "./components/About";
 import Home from "./components/Home"
 import Navbar from "./components/Navbar";
-import Skills from "./components/Skills";
-import Portfolio from "./components/Portfolio";
+import EmotionSongs from "./components/EmotionSongs";
+import VibeSongs from "./components/VibeSongs";
 import Footer from "./components/Footer";
 import AOS from "aos";
 import "./assets/vendor/aos/aos.css";
@@ -28,9 +28,10 @@ function App() {
       <Navbar />
       <Home />
       <About />
-      <Skills />
-      <Portfolio />
-      {//<Contact />
+      <EmotionSongs />
+      <VibeSongs />
+      {
+        //<Contact />
       }
       <Footer />
     </main>
