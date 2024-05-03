@@ -8,8 +8,6 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
 import {
-  QueryClient,
-  QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query'
 
@@ -17,6 +15,14 @@ import {
 
 export default function FacialDetection() {
   const [emotion, setEmotion] = useState();
+  const [emotionCount, setEmotionCount] = useState({
+    "angry": 0,
+    "neutral": 0,
+    "happy": 0,
+    "fear": 0,
+    "surprise": 0,
+    "sad": 0
+  })
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const blazeface = require("@tensorflow-models/blazeface");
@@ -31,19 +37,23 @@ export default function FacialDetection() {
   };
 
 
-const {songRec, refetch} = useQuery({queryKey: ["emotion", emotion], queryFn: async ({emotion}) => {
-  var response = await fetch("http://localhost:8000/song/", {
-    method: "POST",
-    body: JSON.stringify({
-      emotion: emotion
-    }),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8"
+  const { data: songRec, refetch } = useQuery({
+    queryKey: ["emotion", emotion],
+    queryFn: async ({ emotion }) => {
+      const response = await fetch("http://localhost:8000/song/", {
+        method: "POST",
+        body: JSON.stringify({
+          emotion: emotion
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      });
+      const responseData = await response.json(); // Wait for JSON parsing
+      console.log(responseData); // Log the actual data
+      return responseData; // Return the data
     }
-  });
-  console.log(response)
-  return response.json();
-}, }); //include criteria state to query key
+  });//include criteria state to query key
 
 
   const detect = async (net) => {
@@ -77,12 +87,15 @@ const {songRec, refetch} = useQuery({queryKey: ["emotion", emotion], queryFn: as
            image: imageSrc,
          },
        };
-       var pred_log = {"emotion" : "user"}
        socket.onopen = () => socket.send(JSON.stringify(apiCall));
        socket.onmessage = function (event) {
         var pred_log = JSON.parse(event.data)
         setEmotion(pred_log["emotion"])
-        // console.log(pred_log.recommendation, "log")
+        setEmotionCount(prevState => {
+          const updatedEmotionCount = { ...prevState };
+          updatedEmotionCount[pred_log["emotion"]] += 1;
+          return updatedEmotionCount;
+        })
         const ctx = canvasRef.current.getContext("2d");
         requestAnimationFrame(() => {
           drawMesh(face, pred_log, ctx);
@@ -131,7 +144,7 @@ const {songRec, refetch} = useQuery({queryKey: ["emotion", emotion], queryFn: as
               </div>
             </div>
 
-            
+            {console.log(emotionCount)}
           <div className="text-center col-lg-5  pt-lg-0 m-3 content">
             <h3>Looks Like you're: {emotion ? emotion : "Nuetral"}</h3>
             <div className="row">
@@ -146,9 +159,9 @@ const {songRec, refetch} = useQuery({queryKey: ["emotion", emotion], queryFn: as
                   <Card.Body>
                     <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
                     <Card.Text>
-                      By: {songRec ? songRec.artists : "Odesza" }
+                      By: {songRec ? songRec.artist : "Odesza" }
                     </Card.Text>
-                    <Button variant="success" href={songRec ? songRec.external_urls?.spotify : "#"} target="_blank">Listen On Spotify</Button>
+                    <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
                   </Card.Body>
                 </Card>
               </div>
