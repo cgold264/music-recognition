@@ -5,7 +5,10 @@ import base64
 from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from spotify_calls import get_access_token, request_valid_song
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 
 
 import cv2
@@ -14,6 +17,19 @@ from fer import FER
 
 app = FastAPI()
 detector = FER()
+
+
+origins = [
+    "*",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Emotion(BaseModel):
     emotion : Optional[str] =  None
@@ -43,8 +59,12 @@ async def websocket_endpoint(websocket: WebSocket):
         print("Error", e)
         websocket.close()
 
-@app.post("/emotion/")
+@app.post("/song/")
 async def create_item(emotion: Emotion):
-    song_rec = request_valid_song(get_access_token(), emotion.emotion)
-    return song_rec
+    song_rec = request_valid_song(get_access_token(), "chill")
+    artist = song_rec['artists'][0]['name']
+    song = song_rec['name']
+    album_image = song_rec['album']['images'][0]['url']
+    external_url = song_rec['external_urls']['spotify']
+    return JSONResponse(content=jsonable_encoder({"song": song, "artist": artist, "album_image": album_image, "external_urls": external_url}))
 

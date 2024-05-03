@@ -73,23 +73,3 @@ def genre_from_emotion(emotion):
     except FileNotFoundError:
         print("Couldn't find genres file!")
     return "Test"
-
-def main():
-    access_token = get_access_token()
-    print(access_token, "access token")
-
-    try:
-        with open('genres.json', 'r') as infile:
-            valid_genres = json.load(infile)
-            print(type(valid_genres))
-    except FileNotFoundError:
-        print("Couldn't find genres file!")
-
-    valid_genres = random.choice(valid_genres)
-
-    print('genre {valid_genres}')
-    result = request_valid_song(access_token, genre=valid_genres)
-    print(result)
-
-if __name__ == '__main__':
-    main()
