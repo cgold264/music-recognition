@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import About from "./components/About";
+import FacialDetection from "./components/FacialDetection";
 import Home from "./components/Home"
 import Navbar from "./components/Navbar";
 import EmotionSongs from "./components/EmotionSongs";
@@ -27,7 +27,7 @@ function App() {
     <main id="main bg-dark">
       <Navbar />
       <Home />
-      <About />
+      <FacialDetection />
       <EmotionSongs />
       <VibeSongs />
       {

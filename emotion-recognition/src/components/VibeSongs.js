@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import PortfolioItem from "./PortfolioItem";
-import ProgressBar from "./Progress";
 import Popup from 'reactjs-popup';
 import Accordion from "./Accordion";
 import 'reactjs-popup/dist/index.css';
@@ -92,12 +91,8 @@ export default function Portfolio(){
                                             </div>
                                             <div class="row skills-content">    
                                                 <div class="col-lg-6">
-                                                    <ProgressBar skill={"Linux"} progress={3} timeFrame={"Years"}/>
-                                                    <ProgressBar skill={"Bash Scripting"} progress={6} timeFrame={"Months"}/>
                                                 </div>
                                                 <div class="col-lg-6">
-                                                    <ProgressBar skill={"Kali Tools"} progress={6} timeFrame={"Months"}/> 
-                                                    <ProgressBar skill={"Networking/Networking tools"} progress={1} timeFrame={"Year"}/> 
                                                 </div>
                                             </div>
                                             
@@ -137,16 +132,10 @@ export default function Portfolio(){
                                             
                                             <div class="row skills-content">    
                                                 <div class="col-lg-6">
-                                                    <ProgressBar skill= {"C++"} progress={3} timeFrame={"Years"}/>
-                                                    <ProgressBar skill= {"Java"} progress={3} timeFrame={"Years"}/>
-                                                    <ProgressBar skill={"Python/Django"} progress={1} timeFrame={"Year"}/>
-                                                    <ProgressBar skill={"Kotlin"} progress={6} timeFrame={"Months"}/>
+                                                    
                                                 </div>
                                                 <div class="col-lg-6">
-                                                    <ProgressBar skill={"Git/Github"} progress={3} timeFrame={"Years"}/>
-                                                    <ProgressBar skill={"Bootstrap"} progress={6} timeFrame={"Months"}/>
-                                                    <ProgressBar skill={"HTML/CSS"} progress={1} timeFrame={"Year"}/>
-                                                    <ProgressBar skill={"Javascript/ReactJS"} progress={6} timeFrame={"Months"}/>
+                                                    
                                                 </div>
                                             </div>
                                             

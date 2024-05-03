@@ -1,7 +1,6 @@
 // Drawing Mesh
 export const drawMesh = (predictions, emotions, ctx) => {
-// var emo = emotions['emotion']
-var emo = "test"
+var emo = emotions['emotion']
 if (predictions.length > 0) {
     for (let i = 0; i < predictions.length; i++) {
         const start = predictions[i].topLeft;
