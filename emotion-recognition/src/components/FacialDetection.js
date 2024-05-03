@@ -7,9 +7,16 @@ import { drawMesh } from "../utilities";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
+
+
+
 export default function FacialDetection() {
   const [emotion, setEmotion] = useState();
-  const [songRec, setSongRec] = useState();
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const blazeface = require("@tensorflow-models/blazeface");
@@ -22,6 +29,22 @@ export default function FacialDetection() {
       detect(model);
     }, 100);
   };
+
+
+const {songRec, refetch} = useQuery({queryKey: ["emotion", emotion], queryFn: async ({emotion}) => {
+  var response = await fetch("http://localhost:8000/song/", {
+    method: "POST",
+    body: JSON.stringify({
+      emotion: emotion
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+  });
+  console.log(response)
+  return response.json();
+}, }); //include criteria state to query key
+
 
   const detect = async (net) => {
     if (
@@ -59,30 +82,29 @@ export default function FacialDetection() {
        socket.onmessage = function (event) {
         var pred_log = JSON.parse(event.data)
         setEmotion(pred_log["emotion"])
-        setSongRec(pred_log.recommendation)
         // console.log(pred_log.recommendation, "log")
         const ctx = canvasRef.current.getContext("2d");
         requestAnimationFrame(() => {
           drawMesh(face, pred_log, ctx);
         });
      }
-     
-
-     
     }
-
-     
   };
   useEffect(() => {
     runFaceDetectorModel();
   }, []);
+
+
+  
+    
+
+
   return (
     <section id="about" className="about bg-light">
       <div className="container">
         <div className="section-title">
           <h2>Lets find you a song</h2>
         </div>
-
         <div className="row">
           <div className="col-lg-6 m-3" id="camera-div">
               <div style={{ position: "relative" }}>
@@ -118,15 +140,15 @@ export default function FacialDetection() {
                   <Card.Img
                     style={{ maxHeight: "300px" }}
                     variant="top"
-                    src={songRec ? songRec.album.images[0].url : image}
+                    src={songRec ? songRec.album_image: image}
                   />
-                  {console.log(songRec)}
+                  {console.log(songRec, "songRec")}
                   <Card.Body>
-                    <Card.Title>{songRec ? songRec.name : "Last Goodbye"}</Card.Title>
+                    <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
                     <Card.Text>
-                      By: {songRec ? songRec.artists[0]?.name : "Odesza" }
+                      By: {songRec ? songRec.artists : "Odesza" }
                     </Card.Text>
-                    <Button variant="success" href={songRec ? songRec.external_urls.spotify : "#"} target="_blank">Listen On Spotify</Button>
+                    <Button variant="success" href={songRec ? songRec.external_urls?.spotify : "#"} target="_blank">Listen On Spotify</Button>
                   </Card.Body>
                 </Card>
               </div>
