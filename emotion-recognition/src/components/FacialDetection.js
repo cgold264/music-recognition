@@ -54,14 +54,15 @@ export default function FacialDetection() {
       const responseData = await response.json();
       setSongRec(responseData);
       setLoadSong(false)
+
       return responseData;
     } 
   }
   
-  const { data: tempSongRecResponse, refetch } = useQuery({
-    queryKey: ["emotion", emotion],
-    queryFn: getSong(),
-  });//include criteria state to query key
+  // const { data: tempSongRecResponse, refetch } = useQuery({
+  //   queryKey: ["emotion", emotion],
+  //   queryFn: getSong(),
+  // });//include criteria state to query key
 
   const detect = async (net) => {
     if (
@@ -186,11 +187,16 @@ export default function FacialDetection() {
                                     <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
                                   </Card.Body>
                                 </Card>
-                                <Button variant="outline-success" className="m-3"onClick={() => {setLoadSong(true)}}>
-                                  New Song <i class='bx bx-skip-next-circle'></i>
-                                </Button>
+                                
                                 </>
                                 }
+                                <Button variant="outline-success" className="m-3"onClick={() => {
+                                  console.log(loadSong, )
+                                  setLoadSong(true); 
+                                  getSong();
+                                  }}>
+                                  New Song <i class='bx bx-skip-next-circle'></i>
+                                </Button>
                               </div>
               
             </div>
