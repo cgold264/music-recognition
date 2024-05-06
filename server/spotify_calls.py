@@ -3,7 +3,6 @@ import json
 import random
 
 
-
 CLIENT_ID = 'aca1db0e22a143f5bb5981b3cc287f97'
 CLIENT_SECRET = 'ef3f726333634533815afeb893e9c3ad'
 
@@ -24,7 +23,7 @@ def get_access_token():
     access_token = auth_response_data['access_token']
     return access_token
 
-def request_valid_song(access_token, genre="acoustic"):
+async def request_valid_song(access_token, genre="acoustic"):
 
     # Wildcards for random search
     random_wildcards = ['%25a%25', 'a%25', '%25a',

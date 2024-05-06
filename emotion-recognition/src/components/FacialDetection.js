@@ -6,6 +6,7 @@ import Webcam from "react-webcam";
 import { drawMesh } from "../utilities";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import { ColorRing } from 'react-loader-spinner'
 
 import {
   useQuery,
@@ -15,7 +16,10 @@ import {
 
 export default function FacialDetection() {
   const [emotion, setEmotion] = useState();
+   const [songRec, setSongRec] = useState();
+  const [loadSong, setLoadSong] = useState(true)
   const [emotionCount, setEmotionCount] = useState({
+    "frame_count": 0,
     "angry": 0,
     "neutral": 0,
     "happy": 0,
@@ -36,10 +40,8 @@ export default function FacialDetection() {
     }, 100);
   };
 
-
-  const { data: songRec, refetch } = useQuery({
-    queryKey: ["emotion", emotion],
-    queryFn: async ({ emotion }) => {
+  const getSong = async () => {
+    if(loadSong){
       const response = await fetch("http://localhost:8000/song/", {
         method: "POST",
         body: JSON.stringify({
@@ -49,12 +51,17 @@ export default function FacialDetection() {
           "Content-type": "application/json; charset=UTF-8"
         }
       });
-      const responseData = await response.json(); // Wait for JSON parsing
-      console.log(responseData); // Log the actual data
-      return responseData; // Return the data
-    }
+      const responseData = await response.json();
+      setSongRec(responseData);
+      setLoadSong(false)
+      return responseData;
+    } 
+  }
+  
+  const { data: tempSongRecResponse, refetch } = useQuery({
+    queryKey: ["emotion", emotion],
+    queryFn: getSong(),
   });//include criteria state to query key
-
 
   const detect = async (net) => {
     if (
@@ -94,6 +101,7 @@ export default function FacialDetection() {
         setEmotionCount(prevState => {
           const updatedEmotionCount = { ...prevState };
           updatedEmotionCount[pred_log["emotion"]] += 1;
+          updatedEmotionCount["frame_count"] += 1;
           return updatedEmotionCount;
         })
         const ctx = canvasRef.current.getContext("2d");
@@ -103,13 +111,15 @@ export default function FacialDetection() {
      }
     }
   };
+  
   useEffect(() => {
     runFaceDetectorModel();
   }, []);
 
+  
 
   
-    
+
 
 
   return (
@@ -136,7 +146,7 @@ export default function FacialDetection() {
                     position: "absolute",
                     left: "0",
                     top: "0",
-                    zIndex: 2, // Ensure canvas appears on top of webcam
+                    zIndex: 2, 
                     maxWidth: "100%",
                     maxHeight: "100%",
                   }}
@@ -144,27 +154,45 @@ export default function FacialDetection() {
               </div>
             </div>
 
-            {console.log(emotionCount)}
           <div className="text-center col-lg-5  pt-lg-0 m-3 content">
             <h3>Looks Like you're: {emotion ? emotion : "Nuetral"}</h3>
             <div className="row">
-              <div className="col-12 text-center px-5">
-                <Card style={{ width: "100%" }}>
-                  <Card.Img
-                    style={{ maxHeight: "300px" }}
-                    variant="top"
-                    src={songRec ? songRec.album_image: image}
-                  />
-                  {console.log(songRec, "songRec")}
-                  <Card.Body>
-                    <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
-                    <Card.Text>
-                      By: {songRec ? songRec.artist : "Odesza" }
-                    </Card.Text>
-                    <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
-                  </Card.Body>
-                </Card>
-              </div>
+            <div className="col-12 text-center px-5">
+                  {loadSong ? <><ColorRing
+                                visible={true}
+                                height="80"
+                                width="80"
+                                ariaLabel="color-ring-loading"
+                                wrapperStyle={{}}
+                                wrapperClass="color-ring-wrapper"
+                                colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                                /> 
+                                <h3 className="color-primary">
+                                  Loading Song...
+                                </h3>
+                                </>: 
+                                <>
+                                <Card style={{ width: "100%" }}>
+                                  <Card.Img
+                                    style={{ maxHeight: "300px" }}
+                                    variant="top"
+                                    src={songRec ? songRec.album_image: image}
+                                  />
+                                  <Card.Body>
+                                    <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
+                                    <Card.Text>
+                                      By: {songRec ? songRec.artist : "Odesza" }
+                                    </Card.Text>
+                                    <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
+                                  </Card.Body>
+                                </Card>
+                                <Button variant="outline-success" className="m-3"onClick={() => {setLoadSong(true)}}>
+                                  New Song <i class='bx bx-skip-next-circle'></i>
+                                </Button>
+                                </>
+                                }
+                              </div>
+              
             </div>
           </div>
         </div>

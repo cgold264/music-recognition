@@ -19,9 +19,7 @@ app = FastAPI()
 detector = FER()
 
 
-origins = [
-    "*",
-]
+origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -61,7 +59,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/song/")
 async def create_item(emotion: Emotion):
-    song_rec = request_valid_song(get_access_token(), "chill")
+    song_rec = await request_valid_song(get_access_token(), "chill")
     artist = song_rec['artists'][0]['name']
     song = song_rec['name']
     album_image = song_rec['album']['images'][0]['url']
