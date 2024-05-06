@@ -16,7 +16,7 @@ class Navbar extends React.Component {
                     <i class="bx bx-video"></i> <span>Video</span>
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="#emotion" class="nav-link scrollto active">
                     <i class="bx bx-happy-beaming"></i> <span>Emotion</span>
                   </a>
@@ -25,7 +25,7 @@ class Navbar extends React.Component {
                   <a href="#portfolio" class="nav-link scrollto active">
                     <i class="bx bx-leaf"></i> <span>Vibe</span>
                   </a>
-                </li>
+                </li> */}
               </ul>
             </nav>
           </header>

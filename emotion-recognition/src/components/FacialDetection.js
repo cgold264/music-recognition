@@ -8,15 +8,11 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { ColorRing } from 'react-loader-spinner'
 
-import {
-  useQuery,
-} from '@tanstack/react-query'
-
 
 
 export default function FacialDetection() {
   const [emotion, setEmotion] = useState();
-   const [songRec, setSongRec] = useState();
+  const [songRec, setSongRec] = useState();
   const [loadSong, setLoadSong] = useState(true)
   const [emotionCount, setEmotionCount] = useState({
     "frame_count": 0,
@@ -41,28 +37,30 @@ export default function FacialDetection() {
   };
 
   const getSong = async () => {
-    if(loadSong){
-      const response = await fetch("http://localhost:8000/song/", {
-        method: "POST",
-        body: JSON.stringify({
-          emotion: emotion
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      });
-      const responseData = await response.json();
-      setSongRec(responseData);
+    try {
+      if (loadSong) {
+        const response = await fetch("http://localhost:8000/song/", {
+          method: "POST",
+          body: JSON.stringify({
+            emotion: emotion
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        });
+        
+        const responseData = await response.json();
+        setSongRec(responseData);
+        setLoadSong(false)
+        return responseData;
+      } 
+    } catch (error) {
+      console.error("Error fetching song:", error);
       setLoadSong(false)
-
-      return responseData;
-    } 
   }
+}
   
-  // const { data: tempSongRecResponse, refetch } = useQuery({
-  //   queryKey: ["emotion", emotion],
-  //   queryFn: getSong(),
-  // });//include criteria state to query key
+  
 
   const detect = async (net) => {
     if (
@@ -118,10 +116,10 @@ export default function FacialDetection() {
   }, []);
 
   
-
+  useEffect(() => {
+      getSong();
+  }, [loadSong]);
   
-
-
 
   return (
     <section id="about" className="about bg-light">
@@ -159,46 +157,44 @@ export default function FacialDetection() {
             <h3>Looks Like you're: {emotion ? emotion : "Nuetral"}</h3>
             <div className="row">
             <div className="col-12 text-center px-5">
-                  {loadSong ? <><ColorRing
-                                visible={true}
-                                height="80"
-                                width="80"
-                                ariaLabel="color-ring-loading"
-                                wrapperStyle={{}}
-                                wrapperClass="color-ring-wrapper"
-                                colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
-                                /> 
-                                <h3 className="color-primary">
-                                  Loading Song...
-                                </h3>
-                                </>: 
-                                <>
-                                <Card style={{ width: "100%" }}>
-                                  <Card.Img
-                                    style={{ maxHeight: "300px" }}
-                                    variant="top"
-                                    src={songRec ? songRec.album_image: image}
-                                  />
-                                  <Card.Body>
-                                    <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
-                                    <Card.Text>
-                                      By: {songRec ? songRec.artist : "Odesza" }
-                                    </Card.Text>
-                                    <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
-                                  </Card.Body>
-                                </Card>
-                                
-                                </>
-                                }
-                                <Button variant="outline-success" className="m-3"onClick={() => {
-                                  console.log(loadSong, )
-                                  setLoadSong(true); 
-                                  getSong();
-                                  }}>
-                                  New Song <i class='bx bx-skip-next-circle'></i>
-                                </Button>
-                              </div>
-              
+              {loadSong ? 
+                <>
+                  <ColorRing
+                    visible={true}
+                    height="80"
+                    width="80"
+                    ariaLabel="color-ring-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="color-ring-wrapper"
+                    colors={['#1DB954', '#000000', '#ffffff', '#abbd81', '#849b87']}
+                    /> 
+                    <h3 className="color-primary">
+                      Loading Song...
+                    </h3>
+                    </>: 
+                    <>
+                    <Card style={{ width: "100%" }}>
+                      <Card.Img
+                        style={{ maxHeight: "300px" }}
+                        variant="top"
+                        src={songRec ? songRec.album_image: image}
+                      />
+                      <Card.Body>
+                        <Card.Title>{songRec ? songRec.song : "Last Goodbye"}</Card.Title>
+                        <Card.Text>
+                          By: {songRec ? songRec.artist : "Odesza" }
+                        </Card.Text>
+                        <Button variant="success" href={songRec ? songRec.external_urls : "#"} target="_blank">Listen On Spotify</Button>
+                        <Button variant="outline-success" className="mx-2" onClick={() => {
+                          setLoadSong(true); 
+                        }}>
+                        New Song <i class='bx bx-skip-next-circle'></i>
+                      </Button>
+                      </Card.Body>
+                    </Card>
+                  </>
+                }
+              </div>
             </div>
           </div>
         </div>

@@ -37,8 +37,8 @@ function App() {
         <Navbar />
         <Home />
         <FacialDetection />
-        <EmotionSongs />
-        <VibeSongs />
+        {/* <EmotionSongs />
+        <VibeSongs /> */}
         {
           //<Contact />
         }
